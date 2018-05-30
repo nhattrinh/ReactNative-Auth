@@ -3,14 +3,14 @@ import { View, Text } from 'react-native';
 import firebase from 'firebase';
 
 // import components
-import { Header } from './components/reusable';
+import { Header, Button, Card, CardSection, Spinner } from './components/reusable';
 import LoginForm from './components/LoginForm';
 
 export default class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      loggedIn: false
+      loggedIn: null
     };
   }
 
@@ -33,11 +33,34 @@ export default class App extends Component{
 
   }
 
+  renderContent(){
+    switch(this.state.loggedIn){
+      case true: 
+        return(   
+          <Card>
+            <CardSection>
+              <Button onPress={()=>firebase.auth().signOut()}>Logout</Button>
+            </CardSection>
+          </Card>
+        );
+        
+      case false:
+        return <LoginForm />
+
+      default:
+        return(
+          <View style={{ paddingTop: 10 }}>
+            <Spinner />
+          </View>
+        );
+    }
+  }
+
   render(){
     return(
       <View>
         <Header headerText='Auth App' />
-        { this.state.loggedIn ? <LogoutForm /> : <LoginForm /> }
+        { this.renderContent() }
       </View>
     );
   }
